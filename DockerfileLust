@@ -1,0 +1,5 @@
+FROM mishaszu/lust:latest
+
+RUN mkdir -p /album_storage
+
+ADD ./lust_config/config.yaml /var/lust/config.yaml

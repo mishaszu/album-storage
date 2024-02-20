@@ -1,0 +1,67 @@
+backend:
+  filesystem: # Use the filesystem backend.
+    directory: "/album_storage"
+
+base_serving_path: "/images" # Serve buckets out of `/images`
+
+buckets:
+  profile:
+    mode: jit # Optimise images as and when they're required then store them.
+    formats:
+      png: false # Disable PNG encoding.
+      jpeg: true # Enable JPEG encoding.
+      webp: true # Enable WebP encoding.
+      gif: false # Disable GIF encoding.
+
+      webp_config:
+        quality: 80 # Set lossy quality to 80%
+        method: 5 # Opt on the side of performance slightly more than quality.
+        threading: true # Enable multi-threaded encoding.
+
+    default_serving_format: webp # Serve the WebP format by default.
+    default_serving_preset: small # Use the "medium-square" sizing preset by default.
+
+    global_cache:
+      max_images: 100 # At most cache 1000 images.
+
+    presets:
+      medium:
+        width: 1600
+        height: 1600
+      small: # Define a new resizing preset.
+        width: 600 # 500px
+        height: 600
+
+    cache: null # Use the global cache handler.
+
+  imagery: # Define a bucket called "user-profiles", this is accessable out of `/images/user-profiles`.
+    mode: jit # Optimise images as and when they're required then store them.
+    formats:
+      png: false # Disable PNG encoding.
+      jpeg: true # Enable JPEG encoding.
+      webp: true # Enable WebP encoding.
+      gif: false # Disable GIF encoding.
+
+      webp_config:
+        quality: 100 # Set lossy quality to 80%
+        method: 6 # Opt on the side of performance slightly more than quality.
+        threading: true # Enable multi-threaded encoding.
+
+    default_serving_format: webp # Serve the WebP format by default.
+
+    global_cache:
+      max_images: 500 # At most cache 1000 images.
+
+    presets:
+      large:
+        width: 3200
+        height: 3200
+      medium:
+        width: 1600
+        height: 1600
+      small: # Define a new resizing preset.
+        width: 600 # 500px
+        height: 600
+
+    cache: null # Use the global cache handler.
+

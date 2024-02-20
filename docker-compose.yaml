@@ -1,0 +1,47 @@
+version: "3.3"
+services:
+  db1:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "dev_only_pwd"
+      POSTGRES_DB: "album_storage"
+    volumes:
+      - database_data:/var/lib/postgresql/data
+  album_storage:
+    build:
+      context: "."
+      dockerfile: "DockerfileApp"
+    ports:
+      - "3000:3000"
+    links:
+      - db1
+    environment:
+      DATABASE_URL: "postgres://postgres:dev_only_pwd@db1/album_storage"
+      RUST_LOG: "album_storage=debug"
+      LUST_URL: "http://localhost:8000/v1/images"
+      IMAGES_DIR: "/album_storage"
+      LUST_BUCKET: "imagery"
+      LUST_PROFILE_BUCKET: "profiles"
+      PWD_KEY: "CKUGFOD9_2Qf6Pn3ZFRYgPYb8ht4vKqEG9PGMXTB7497bT0367DjoaD6ydFnEVaIRda0kKeBZVCT5Hb62m2sCA"
+      TOKEN_SECRET: "9FoHBmkyxbgu_xFoQK7e0jz3RMNVJWgfvbVn712FBNH9LLaAWS3CS6Zpcg6RveiObvCUb6a2z-uAiLjhLh2igw"
+      PORT: "3000"
+      TOKEN_DURATION: "2592000"
+    volumes:
+      - ~/album_storage:/album_storage
+  lust:
+    build:
+      context: "."
+      dockerfile: "DockerfileLust"
+    ports:
+      - "8000:8000"
+    environment:
+      CONFIG_FILE: "/var/lust/config.yaml"
+    volumes:
+      - ~/album_storage:/album_storage
+
+volumes:
+  database_data:
+    driver: local
